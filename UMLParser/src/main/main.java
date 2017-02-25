@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class uml {
+public class main {
     private static List<String> filesList = new ArrayList();
 
     public static void main(String[] args) {
