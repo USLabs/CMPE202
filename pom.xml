@@ -8,6 +8,11 @@
     <artifactId>manguman</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <scm>
+        <url>https://github.com/dspinellis/UMLGraph</url>
+        <connection>git://github.com/dspinellis/UMLGraph.git</connection>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>com.github.javaparser</groupId>
