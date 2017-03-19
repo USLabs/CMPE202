@@ -1,3 +1,3 @@
 # CMPE202
 
-Using UML Parser
+Using Java Parser
