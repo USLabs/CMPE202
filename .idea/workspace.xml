@@ -1,28 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8fbdb93f-b2ce-4c07-885b-ce0790ce6769" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_github_javaparser_javaparser_core_3_0_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_3_8_1.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_sourceforge_plantuml_plantuml_7999.xml" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/README.md" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest1.png" afterPath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest1.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest2.png" afterPath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest2.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest3.png" afterPath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest3.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest4.png" afterPath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest4.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest5.png" afterPath="$PROJECT_DIR$/src/sampleOutput/classDiagramTest5.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/sampleOutput/seq.png" afterPath="$PROJECT_DIR$/src/sampleOutput/seq.png" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/ParseEngine.class" afterPath="$PROJECT_DIR$/target/classes/ParseEngine.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/Umlparser.class" afterPath="$PROJECT_DIR$/target/classes/Umlparser.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/CMPE202.iml" afterPath="$PROJECT_DIR$/.idea/CMPE202.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ParseEngine.java" afterPath="$PROJECT_DIR$/src/main/java/ParseEngine.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/ParseSeqEngine.java" afterPath="$PROJECT_DIR$/src/main/java/ParseSeqEngine.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/Umlparser.java" afterPath="$PROJECT_DIR$/src/main/java/Umlparser.java" />
-    </list>
+    <list default="true" id="8fbdb93f-b2ce-4c07-885b-ce0790ce6769" name="Default" comment="" />
     <ignored path="CMPE202.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
@@ -729,12 +708,12 @@
       <workItem from="1490432431082" duration="174000" />
       <workItem from="1490432628517" duration="95000" />
       <workItem from="1492737684172" duration="72000" />
-      <workItem from="1492737774335" duration="209000" />
+      <workItem from="1492737774335" duration="311000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4278000" />
+    <option name="totallyTimeSpent" value="4380000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1366" height="741" extended-state="6" />
