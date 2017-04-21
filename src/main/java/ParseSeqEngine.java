@@ -77,9 +77,14 @@ public class ParseSeqEngine {
                             if (bs instanceof BlockStmt) {
                                 for (Object es : ((Node) bs)
                                         .getChildNodes()) {
-                                    mcea.add(
-                                            (MethodCallExpr) (((ExpressionStmt) (es))
-                                                    .getExpression()));
+                                    if (es instanceof ExpressionStmt) {
+                                        if (((ExpressionStmt) (es))
+                                                .getExpression() instanceof MethodCallExpr) {
+                                            mcea.add(
+                                                    (MethodCallExpr) (((ExpressionStmt) (es))
+                                                            .getExpression()));
+                                        }
+                                    }
                                 }
                             }
                         }

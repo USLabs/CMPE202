@@ -31,8 +31,37 @@ public class ParseEngine {
         buildMap(cuArray);
         for (CompilationUnit cu : cuArray)
             yumlCode += parser(cu);
+        yumlCode += parseAdditions();
+        yumlCode = yumlCodeUniquer(yumlCode);
         System.out.println("Unique Code: " + yumlCode);
         GenerateDiagram.generatePNG(yumlCode, outPath);
+    }
+
+    private String yumlCodeUniquer(String code) {
+        String[] codeLines = code.split(",");
+        String[] uniqueCodeLines = new LinkedHashSet<String>(
+                Arrays.asList(codeLines)).toArray(new String[0]);
+        String result = String.join(",", uniqueCodeLines);
+        return result;
+    }
+
+    private String parseAdditions() {
+        String result = "";
+        Set<String> keys = mapClassConn.keySet(); // get all keys
+        for (String i : keys) {
+            String[] classes = i.split("-");
+            if (map.get(classes[0]))
+                result += "[<<interface>>;" + classes[0] + "]";
+            else
+                result += "[" + classes[0] + "]";
+            result += mapClassConn.get(i); // Add connection
+            if (map.get(classes[1]))
+                result += "[<<interface>>;" + classes[1] + "]";
+            else
+                result += "[" + classes[1] + "]";
+            result += ",";
+        }
+        return result;
     }
 
     private String parser(CompilationUnit cu) {
@@ -68,13 +97,14 @@ public class ParseEngine {
                         && !coi.isInterface()) {
                     if (nextParam)
                         methods += ";";
-                    methods += "+ " + cd.getName() + "(";
+                    methods += "+" + cd.getName() + "(";
                     for (Object gcn : cd.getChildNodes()) {
                         if (gcn instanceof Parameter) {
                             Parameter paramCast = (Parameter) gcn;
                             String paramClass = paramCast.getType().toString();
                             String paramName = paramCast.getChildNodes()
                                     .get(0).toString();
+                            methods += paramName + ":" + paramClass;
                             if (map.containsKey(paramClass)
                                     && !map.get(classShortName)) {
                                 additions += "[" + classShortName
@@ -108,7 +138,7 @@ public class ParseEngine {
                     } else {
                         if (nextParam)
                             methods += ";";
-                        methods += "+ " + md.getName() + "(";
+                        methods += "+" + md.getName() + "(";
                         for (Object gcn : md.getChildNodes()) {
                             if (gcn instanceof Parameter) {
                                 Parameter paramCast = (Parameter) gcn;
@@ -116,7 +146,7 @@ public class ParseEngine {
                                         .toString();
                                 String paramName = paramCast.getChildNodes()
                                         .get(0).toString();
-                                methods += paramName + " : " + paramClass;
+                                methods += paramName + ":" + paramClass;
                                 if (map.containsKey(paramClass)
                                         && !map.get(classShortName)) {
                                     additions += "[" + classShortName
@@ -128,9 +158,24 @@ public class ParseEngine {
                                         additions += "[" + paramClass + "]";
                                 }
                                 additions += ",";
+                            } else {
+                                String methodBody[] = gcn.toString().split(" ");
+                                for (String foo : methodBody) {
+                                    if (map.containsKey(foo)
+                                            && !map.get(classShortName)) {
+                                        additions += "[" + classShortName
+                                                + "] uses -.->";
+                                        if (map.get(foo))
+                                            additions += "[<<interface>>;" + foo
+                                                    + "]";
+                                        else
+                                            additions += "[" + foo + "]";
+                                        additions += ",";
+                                    }
+                                }
                             }
                         }
-                        methods += ") : " + md.getType();
+                        methods += "):" + md.getType();
                         nextParam = true;
                     }
                 }
@@ -187,8 +232,8 @@ public class ParseEngine {
                 }
                 if (fieldScope == "+" || fieldScope == "-") {
                     if (nextField)
-                        fields += "; ";
-                    fields += fieldScope + " " + fieldName + " : " + fieldClass;
+                        fields += ";";
+                    fields += fieldScope + fieldName + ":" + fieldClass;
                     nextField = true;
                 }
             }
@@ -199,7 +244,7 @@ public class ParseEngine {
             List<ClassOrInterfaceType> classesList = (List<ClassOrInterfaceType>) coi
                     .getExtendedTypes();
             for(ClassOrInterfaceType extendClasses : classesList){
-                additions += "[" + classShortName + "] " + "-^ " + "[" + extendClasses.getElementType() + "]";
+                additions += "[" + classShortName + "]" + "-^" + "[" + extendClasses.getElementType() + "]";
                 additions += ",";
             }
         }
@@ -207,7 +252,7 @@ public class ParseEngine {
             List<ClassOrInterfaceType> interfaceList = (List<ClassOrInterfaceType>) coi
                     .getImplementedTypes();
             for (ClassOrInterfaceType intface : interfaceList) {
-                additions += "[" + classShortName + "] " + "-.-^ " + "["
+                additions += "[" + classShortName + "]" + "-.-^" + "["
                         + "<<interface>>;" + intface + "]";
                 additions += ",";
             }

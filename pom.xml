@@ -8,10 +8,8 @@
     <artifactId>manguman</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <scm>
-        <url>https://github.com/dspinellis/UMLGraph</url>
-        <connection>git://github.com/dspinellis/UMLGraph.git</connection>
-    </scm>
+    <name>manguman</name>
+    <url>http://maven.apache.org</url>
 
     <dependencies>
         <dependency>
@@ -31,5 +29,6 @@
             <version>3.0.1</version>
         </dependency>
     </dependencies>
-    
+
+
 </project>
