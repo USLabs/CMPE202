@@ -10,31 +10,30 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.printer.PrettyPrinterConfiguration;
 import net.sourceforge.plantuml.StringUtils;
 
-public class ParseEngine {
-    final String inPath;
-    final String outPath;
+public class UMLDiagramProcessor {
     HashMap<String, Boolean> map;
-    HashMap<String, String> mapClassConn;
+    HashMap<String, String> classConnectionMap;
+    ArrayList<CompilationUnit> compilationUnitArray;
     String yumlCode;
-    ArrayList<CompilationUnit> cuArray;
+    final String inputPath, outputPath;
 
-    ParseEngine(String inPath, String outFile) {
-        this.inPath = inPath;
-        this.outPath = outFile + ".png";
+    UMLDiagramProcessor(String inputPath, String outFile) {
+        this.inputPath = inputPath;
+        this.outputPath = outFile + ".png";
         map = new HashMap<String, Boolean>();
-        mapClassConn = new HashMap<String, String>();
+        classConnectionMap = new HashMap<String, String>();
         yumlCode = "";
     }
 
     public void start() throws Exception {
-        cuArray = getCuArray(inPath);
-        buildMap(cuArray);
-        for (CompilationUnit cu : cuArray)
+        compilationUnitArray = getcompilationUnitArray(inputPath);
+        makeAllMaps(compilationUnitArray);
+        for (CompilationUnit cu : compilationUnitArray)
             yumlCode += parser(cu);
         yumlCode += parseAdditions();
         yumlCode = yumlCodeUniquer(yumlCode);
         System.out.println("Unique Code: " + yumlCode);
-        GenerateDiagram.generatePNG(yumlCode, outPath);
+        DrawDiagram.drawPNG(yumlCode, outputPath);
     }
 
     private String yumlCodeUniquer(String code) {
@@ -47,14 +46,14 @@ public class ParseEngine {
 
     private String parseAdditions() {
         String result = "";
-        Set<String> keys = mapClassConn.keySet(); // get all keys
+        Set<String> keys = classConnectionMap.keySet(); // get all keys
         for (String i : keys) {
             String[] classes = i.split("-");
             if (map.get(classes[0]))
                 result += "[<<interface>>;" + classes[0] + "]";
             else
                 result += "[" + classes[0] + "]";
-            result += mapClassConn.get(i); // Add connection
+            result += classConnectionMap.get(i); // Add connection
             if (map.get(classes[1]))
                 result += "[<<interface>>;" + classes[1] + "]";
             else
@@ -215,18 +214,18 @@ public class ParseEngine {
                 if (getDepen.length() > 0 && map.containsKey(getDepen)) {
                     String connection = "-";
 
-                    if (mapClassConn
+                    if (classConnectionMap
                             .containsKey(getDepen + "-" + classShortName)) {
-                        connection = mapClassConn
+                        connection = classConnectionMap
                                 .get(getDepen + "-" + classShortName);
                         if (getDepenMultiple)
                             connection = "*" + connection;
-                        mapClassConn.put(getDepen + "-" + classShortName,
+                        classConnectionMap.put(getDepen + "-" + classShortName,
                                 connection);
                     } else {
                         if (getDepenMultiple)
                             connection += "*";
-                        mapClassConn.put(classShortName + "-" + getDepen,
+                        classConnectionMap.put(classShortName + "-" + getDepen,
                                 connection);
                     }
                 }
@@ -243,7 +242,7 @@ public class ParseEngine {
         if (coi.getExtendedTypes() != null && coi.getExtendedTypes().size() != 0) {
             List<ClassOrInterfaceType> classesList = (List<ClassOrInterfaceType>) coi
                     .getExtendedTypes();
-            for(ClassOrInterfaceType extendClasses : classesList){
+            for (ClassOrInterfaceType extendClasses : classesList) {
                 additions += "[" + classShortName + "]" + "-^" + "[" + extendClasses.getElementType() + "]";
                 additions += ",";
             }
@@ -279,8 +278,8 @@ public class ParseEngine {
     }
 
     private String aToSymScope(String stringScope) {
-        if(stringScope.equals("private")) return "-";
-        if(stringScope.equals("public")) return "+";
+        if (stringScope.equals("private")) return "-";
+        if (stringScope.equals("public")) return "+";
         return "";
         /*
         switch (stringScope) {
@@ -294,8 +293,8 @@ public class ParseEngine {
         */
     }
 
-    private void buildMap(ArrayList<CompilationUnit> cuArray) {
-        for (CompilationUnit cu : cuArray) {
+    private void makeAllMaps(ArrayList<CompilationUnit> compilationUnitArray) {
+        for (CompilationUnit cu : compilationUnitArray) {
             List<TypeDeclaration<?>> cl = cu.getTypes();
             for (Node n : cl) {
                 ClassOrInterfaceDeclaration coi = (ClassOrInterfaceDeclaration) n;
@@ -308,34 +307,34 @@ public class ParseEngine {
     @SuppressWarnings("unused")
     private void printMaps() {
         System.out.println("Map:");
-        Set<String> keys = mapClassConn.keySet(); // get all keys
+        Set<String> keys = classConnectionMap.keySet(); // get all keys
         for (String i : keys) {
-            System.out.println(i + "->" + mapClassConn.get(i));
+            System.out.println(i + "->" + classConnectionMap.get(i));
         }
         System.out.println("---");
     }
 
-    private ArrayList<CompilationUnit> getCuArray(String inPath)
+    private ArrayList<CompilationUnit> getcompilationUnitArray(String inputPath)
             throws Exception {
-        File folder = new File(inPath);
+        File folder = new File(inputPath);
 
         File[] files = folder.listFiles();
         Arrays.sort(files);
 
-        ArrayList<CompilationUnit> cuArray = new ArrayList<CompilationUnit>();
+        ArrayList<CompilationUnit> compilationUnitArray = new ArrayList<CompilationUnit>();
         for (final File f : files) {
             if (f.isFile() && f.getName().endsWith(".java")) {
                 FileInputStream in = new FileInputStream(f);
                 CompilationUnit cu;
                 try {
                     cu = JavaParser.parse(in);
-                    cuArray.add(cu);
+                    compilationUnitArray.add(cu);
                 } finally {
                     in.close();
                 }
             }
         }
-        return cuArray;
+        return compilationUnitArray;
     }
 
 }

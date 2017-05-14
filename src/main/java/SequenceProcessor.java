@@ -6,62 +6,57 @@ import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.*;
-
 import net.sourceforge.plantuml.SourceStringReader;
 
-public class ParseSeqEngine {
-    String pumlCode;
-    final String inPath;
-    final String outPath;
-    final String inFuncName;
-    final String inClassName;
-
+public class SequenceProcessor {
     HashMap<String, String> mapMethodClass;
-    ArrayList<CompilationUnit> cuArray;
+    ArrayList<CompilationUnit> compilationUnitArray;
     HashMap<String, ArrayList<MethodCallExpr>> mapMethodCalls;
+    String plantUMLCode;
+    final String inputPath, outputPath, inputFunctionName, inputClassName;
 
-    ParseSeqEngine(String inPath, String inClassName, String inFuncName,
-                   String outFile) {
-        this.inPath = inPath;
-        this.outPath = outFile + ".png";
-        this.inClassName = inClassName;
-        this.inFuncName = inFuncName;
+    SequenceProcessor(String inputPath, String inputClassName, String inputFunctionName,
+                      String outFile) {
+        this.inputPath = inputPath;
+        this.outputPath = outFile + ".png";
+        this.inputClassName = inputClassName;
+        this.inputFunctionName = inputFunctionName;
         mapMethodClass = new HashMap<String, String>();
         mapMethodCalls = new HashMap<String, ArrayList<MethodCallExpr>>();
-        pumlCode = "@startuml\n";
+        plantUMLCode = "@startuml\n";
     }
 
     public void start() throws Exception {
-        cuArray = getCuArray(inPath);
-        buildMaps();
-        pumlCode += "actor user #black\n";
-        pumlCode += "user" + " -> " + inClassName + " : " + inFuncName + "\n";
-        pumlCode += "activate " + mapMethodClass.get(inFuncName) + "\n";
-        parse(inFuncName);
-        pumlCode += "@enduml";
-        generateDiagram(pumlCode);
-        System.out.println("Plant UML Code:\n" + pumlCode);
+        compilationUnitArray = getcompilationUnitArray(inputPath);
+        makeAllMaps();
+        plantUMLCode += "actor user #black\n";
+        plantUMLCode += "user" + " -> " + inputClassName + " : " + inputFunctionName + "\n";
+        plantUMLCode += "activate " + mapMethodClass.get(inputFunctionName) + "\n";
+        parse(inputFunctionName);
+        plantUMLCode += "@enduml";
+        drawDiagram(plantUMLCode);
+        System.out.println("Plant UML Code:\n" + plantUMLCode);
     }
 
     private void parse(String callerFunc) {
 
-        for (MethodCallExpr mce : mapMethodCalls.get(callerFunc)) {
+        for (MethodCallExpr expr : mapMethodCalls.get(callerFunc)) {
             String callerClass = mapMethodClass.get(callerFunc);
-            String calleeFunc = mce.getName().toString();
-            String calleeClass = mapMethodClass.get(calleeFunc);
-            if (mapMethodClass.containsKey(calleeFunc)) {
-                pumlCode += callerClass + " -> " + calleeClass + " : "
-                        + mce.toString() + "\n";
-                pumlCode += "activate " + calleeClass + "\n";
-                parse(calleeFunc);
-                pumlCode += calleeClass + " -->> " + callerClass + "\n";
-                pumlCode += "deactivate " + calleeClass + "\n";
+            String calleeFunction = expr.getName().toString();
+            String calleeClass = mapMethodClass.get(calleeFunction);
+            if (mapMethodClass.containsKey(calleeFunction)) {
+                plantUMLCode += callerClass + " -> " + calleeClass + " : "
+                        + expr.toString() + "\n";
+                plantUMLCode += "activate " + calleeClass + "\n";
+                parse(calleeFunction);
+                plantUMLCode += calleeClass + " -->> " + callerClass + "\n";
+                plantUMLCode += "deactivate " + calleeClass + "\n";
             }
         }
     }
 
-    private void buildMaps() {
-        for (CompilationUnit cu : cuArray) {
+    private void makeAllMaps() {
+        for (CompilationUnit cu : compilationUnitArray) {
             String className = "";
             List<TypeDeclaration<?>> td = cu.getTypes();
             for (Node n : td) {
@@ -69,7 +64,7 @@ public class ParseSeqEngine {
                 className = coi.getName().toString();
                 for (Object o : ((TypeDeclaration) coi)
                         .getMembers()) {
-                    BodyDeclaration<?> bd = (BodyDeclaration<?>)o;
+                    BodyDeclaration<?> bd = (BodyDeclaration<?>) o;
                     if (bd instanceof MethodDeclaration) {
                         MethodDeclaration md = (MethodDeclaration) bd;
                         ArrayList<MethodCallExpr> mcea = new ArrayList<MethodCallExpr>();
@@ -97,32 +92,30 @@ public class ParseSeqEngine {
         //printMaps();
     }
 
-    private ArrayList<CompilationUnit> getCuArray(String inPath)
+    private ArrayList<CompilationUnit> getcompilationUnitArray(String inputPath)
             throws Exception {
-        File folder = new File(inPath);
-        ArrayList<CompilationUnit> cuArray = new ArrayList<CompilationUnit>();
+        File folder = new File(inputPath);
+        ArrayList<CompilationUnit> compilationUnitArray = new ArrayList<CompilationUnit>();
         for (final File f : folder.listFiles()) {
             if (f.isFile() && f.getName().endsWith(".java")) {
                 FileInputStream in = new FileInputStream(f);
                 CompilationUnit cu;
                 try {
                     cu = JavaParser.parse(in);
-                    cuArray.add(cu);
+                    compilationUnitArray.add(cu);
                 } finally {
                     in.close();
                 }
             }
         }
-        return cuArray;
+        return compilationUnitArray;
     }
 
-    private String generateDiagram(String source) throws IOException {
-
-        OutputStream png = new FileOutputStream(outPath);
+    private String drawDiagram(String source) throws IOException {
+        OutputStream img = new FileOutputStream(outputPath);
         SourceStringReader reader = new SourceStringReader(source);
-        String desc = reader.generateImage(png);
-        return desc;
-
+        String imgStr = reader.generateImage(img);
+        return imgStr;
     }
 
     @SuppressWarnings("unused")

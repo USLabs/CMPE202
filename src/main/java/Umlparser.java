@@ -2,10 +2,14 @@ public class Umlparser {
 
     public static void main(String[] args) throws Exception {
 
-            //ParseEngine pe = new ParseEngine("/home/techmint/Downloads/labby/new/TheUMLParser/src/test/java/classDiagramTest1", "/home/techmint/Downloads/labby/new/TheUMLParser/src/sampleOutput/classDiagramTest1");
-            //pe.start();
+        if(args[0] == "uml") {
+            UMLDiagramProcessor umlP = new UMLDiagramProcessor(args[1], args[2]);
+            umlP.start();
+        }
 
-            ParseSeqEngine pse = new ParseSeqEngine("/home/techmint/Downloads/labby/new/TheUMLParser/src/test/java/sequenceDiagramTest1", "Customer", "depositMoney", "/home/techmint/Downloads/labby/new/TheUMLParser/src/sampleOutput/seq");
-            pse.start();
+        if (args[0] == "seq") {
+            SequenceProcessor seqP = new SequenceProcessor(args[1], args[2], args[3], args[4]);
+            seqP.start();
+        }
     }
 }
